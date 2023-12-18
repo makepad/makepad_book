@@ -1,0 +1,6 @@
+[book]
+authors = ["Edward Tan"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Makepad Documentation"
