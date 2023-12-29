@@ -24,7 +24,6 @@ The combination provides both a cross-platform UI toolkit and an interactive IDE
 
 * **Makepad Studio**, which is an application developed using the Makepad Frameowrk, is a rich, graphical IDE that provides a powerful code editor with syntax highlighting, auto-completion, and live code reloading. It also includes a visual interface editor that allows developers to create and edit UI elements visually, without writing manual code.
 
-
 ```mermaid
 graph TD;
     Makepad---Makepad_Framework
