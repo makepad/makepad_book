@@ -42,4 +42,3 @@ Overall, Makepad is a powerful and flexible framework that offers a modern appro
 Its use of Rust and focus on performance make it an attractive option for developers looking to build high-performance applications, while its modular design and live coding support make it a productive tool for creating interactive user interfaces.
 
 The cross-platform capabilities make it an excellent choice for developers looking to create complex and interactive UIs for desktops, mobile, and web applications while maximizing code-reuse and minimizing code development time.
-

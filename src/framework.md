@@ -38,6 +38,8 @@ The folowing is a list of the supported widgets:
 * File Tree
 * ...
 
+More on [Makepad Widgets](widgets.html)
+
 ## Makepad Draw
 
 Makepad's 2D drawing layer.
@@ -52,6 +54,8 @@ It contains:
 - base shaders
 - the shader standard library
 
+More on [Makepad Draw](draw.html)
+
 ## Makepad Platform
 
 Makepad’s main platform abstraction layer.
@@ -64,3 +68,5 @@ It contains:
 - networking
 - the video capture APIs
 - the audio APIs
+
+More on [Makepad Platform](platform.html)
