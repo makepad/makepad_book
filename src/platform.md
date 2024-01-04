@@ -1,5 +1,16 @@
 # Makepad Platform
 
+Makepad’s main platform abstraction layer.
+
+It contains:
+
+- the windowing system with keyboard, mouse and touch input
+- the live system
+- the shader compiler / graphics APIs
+- networking
+- the video capture APIs
+- the audio APIs
+
 ## Live System
 
 The *Live System* enables updates of Makepad applications during runtime. Full live coding can’t be achieved since Rust is a statically compiled language. Therefore Makepad follows a hybrid approach:
@@ -156,3 +167,137 @@ Only the Live DSL definition for `Button` was copied over, so that `button_0` ha
 - `button_1` 
 The value of `color` was overridden by copying over `#0f0` from the DSL object.
 If the Live DSL definition of `Button` would have had any other fields, they would have appeared unchanged.
+
+### Hooks
+
+Widget lifecycles consist of several discrete events, during which specific actions can be executed with the help of hooks. To define a hook for each event, implement the `LiveHook` trait.
+
+Every Live struct should implement this, which was omitted in prior examples for the sake of exposition.`#[derive(LiveHook)]` provides a default implementation of `LiveHook` for cases when no hooks are needed.
+Most components will have to implement the `before_live_design` hook at a minimum. This hook is used to register the component as a widget or to load up dependent crates:
+
+```rust
+impl LiveHook {
+    fn before_live_design(cx: &mut Cx) {
+        register_widget!(cx, Button)
+    }
+}
+```
+
+Another purpose of `LiveHook` is to allow widgets to override how they update themselves from their Live DSL definition. This enables custom Live DSL behavior, which can be useful in certain situations.
+
+The Live DSL provides two different property-types to facilitate customizing its behavior.
+
+| Field properties | Instance properties |
+| --- | --- |
+| Defined with a : | Defined with a = |
+| Set or update corresponding Rust struct fields | Allow widget dependent behavior |
+| Ordinary properties | Special properties with no Rust counterpart |
+
+> 💡 *Instance properties* show up during deserialization just like *field properties.* See [below](https://www.notion.so/Makepad-Architecture-v1-2-c8089aa477c14c349a57e0e633c556ba?pvs=21) for how the `<View>` widget implements child nodes with it.
+
+## Shaders
+
+*MPSL* is Makepad’s custom shader language. It’s a unified language that transpiles to the shader languages of the supported graphics APIs (OpenGL, DirectX, Metal).
+
+**Example**
+
+```rust
+live_design! {
+    DrawColor = {{DrawColor}} {
+        fn pixel(self) -> vec4 {
+            return vec4(self.color.rgb * self.color.a, self.color.a);
+        }
+    }
+}
+
+#[derive(Live)]
+#[repr(C)]
+pub struct DrawColor {
+    #[deref] pub draw_super: DrawQuad,
+    #[live] pub color: Vec4
+}
+```
+
+MSPL code is a sub-DSL of the Live DSL, and thus can be embedded in Live DSL code. This example shows a Live DSL definition for the `DrawColor` struct, which represents the shader on the Rust side.
+
+`DrawColor` inherits most of its behavior from the `DrawQuad` struct which is provided by the Makepad Draw crate, and which represents the base shader for drawing arbitrary quads.
+
+The `#[derive(Live)]` attribute automatically derives the `Deref` trait if exactly one field has the `#[deref]` attribute.
+
+`DrawColor` extends `DrawQuad` by adding a color with which to draw. This is accomplished by adding a `color` field to `DrawColor`.
+
+> 💡 Shaders in Makepad use Deref inheritance. Deref inheritance is usually considered an anti-pattern in Rust, but for this particular use-case, it works well.
+
+Rust structs that represent shaders have certain requirements:
+
+- They need to be `repr(C)`
+- Their fields are expected to have a specific order
+    1. Arbitrary fields
+    2. Base
+    3. Per-instance attributes
+
+This ensures that
+
+- each nested field has a well defined offset in the struct
+- each attribute appears at the end of the struct
+
+**Example**
+
+- Shader `A` inherits from shader `B`.
+- Both `A` and `B` have
+  - one or more arbitrary fields
+  - one or more attributes
+
+The overall structure would look something like this:
+
+```rust
+A {
+    arbitrary_field_0,
+    arbitrary_field_1,
+    ...,
+    #[deref] draw_super: B {
+        arbitrary_field_0,
+        arbitrary_field_1,
+        ...
+        instance_attr_0,
+        instance_attr_1,
+        ...
+    },
+    instance_attr_0,
+    instance_attr_1,
+    ...
+}
+```
+
+Instance attributes appear at the end. When `DrawColor` instantiates its base class, `DrawQuad`, it passes its type information to `DrawQuad`’s constructor. This tells `DrawQuad` which attributes exist and their positions in the derived struct.
+
+Drawing with `DrawColor` typically uses either `draw_abs` (for absolute drawing), or `draw_walk` (for drawing with the [turtle](https://www.notion.so/Makepad-Architecture-v1-2-c8089aa477c14c349a57e0e633c556ba?pvs=21)). These functions are defined on `DrawQuad`, but because of Deref inheritance, they are available on `DrawColor` as well.
+
+When using this shader, calling `draw_abs`/`draw_walk` does not issue a draw call because Makepad uses instanced rendering. Instead, it appends the data for other instances to the instance buffer of the shader.
+
+Instance data is obtained by doing a byte copy of the struct-section containing the instance attributes. Hence the need for them to be contiguous in memory and for `repr(C)`.
+
+## Rendering
+
+Makepad uses instanced rendering. This enhances performance by enabling the GPU to efficiently draw multiple instances of the same object in a single draw call. Each instance can still have different attributes, such as position, size, and color.
+
+**Example**
+
+To draw multiple quads:
+
+- a single quad is used with normalized 0,0..1,1 vertex attributes as the base geometry
+- position and size attributes of each quad are defined per instance
+- the GPU positions and scales instances according to their per-instance attributes
+
+Makepad uses [premultiplied alpha blending](https://en.wikipedia.org/wiki/Alpha_compositing?useskin=vector#Straight_versus_premultiplied). Premultiplied alpha blending is associative. This means that when compositing multiple layers, the order in which layers are grouped together does not matter. For example, if we have three layers `A`, `B`, and `C`, we would composite them as either `(A + B) + C` or `A + (B + C)`.
+This is important, because it allows us to group static layers together and pre-render them to a texture, instead of re-rendering them each frame. We can then composite this pre-rendered texture with any dynamic layers and obtain the same result, while greatly reducing the amount of work required to render each frame.
+By default, Makepad renders with the z-buffer on. This allows Makepad applications to be embedded seamlessly in 3D scenes such as in VR/AR.
+
+Makepad uses [premultiplied alpha blending](https://en.wikipedia.org/wiki/Alpha_compositing?useskin=vector#Straight_versus_premultiplied) [fig 1], which is associative. As a result, the grouping order of layers does not matter during compositing. For example, compositing the layers `A`, `B`, and `C` as `(A + B) + C` or as `A + (B + C)` leads to the same result [fig 2].
+
+![premultiply_layers.png](images/premultiply_layers.png)
+
+Static layers, which are grouped and pre-rendered to a texture, provide better performance than layers that are re-rendered every frame. Combining this texture with dynamic layers requires much less rendering work for each frame.
+Makepad renders with the z-buffer enabled by default. This allows Makepad applications to be seamlessly embedded in 3D scenes, such as VR or AR environments.
+
+> 💡 Note that rendering with the z-buffer on requires drawing the UI from back to front. Fortunately, Makepad's draw APIs already handle this automatically.

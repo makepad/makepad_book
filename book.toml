@@ -1,9 +1,9 @@
 [book]
-authors = ["Edward Tan"]
+title = "Makepad Documentation"
+authors = ["Rik Arends", "Sebastian Michailidis", "Edward Tan"]
 language = "en"
 multilingual = false
 src = "src"
-title = "Makepad Documentation"
 
 [preprocessor]
 
@@ -14,3 +14,6 @@ command = "mdbook-mermaid"
 
 [output.html]
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
+default-theme = "rust"
+git-repository-url = "https://github.com/guofoo/makepad-book"
+git-repository-icon = "fa-github"

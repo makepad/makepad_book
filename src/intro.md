@@ -1,6 +1,8 @@
-# What is Makepad?
+# Introduction
 
-Makepad is used to mean many different things. In this document, we want to clarify what we mean by *Makepad* and the various things related to the project.
+## What is Makepad?
+
+Makepad is used to mean many different things. In this document, we want to clarify what we mean by *Makepad* and the various components related to the project.
 
 At the highest level, Makepad refers to the Makepad Project that is located on github: [Makepad](https://github.com/makepad/makepad)
 

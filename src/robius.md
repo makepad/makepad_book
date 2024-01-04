@@ -1,1 +1,20 @@
 # Project Robius
+
+[Robius](https://github.com/project-robius) is a fully open-source, decentralized, community-driven effort to enable multi-platform application development in Rust.
+
+The project has utilized the Makepad Framework to develop many sample cross-platform UI applications to demonstrate the capabilities of Makepad.
+
+### Flagship apps
+
+* Robrix: the Robius Matrix chat client.  Coming soon!
+
+### Simple demo apps
+
+* [`makepad_social_media_feed`]: a mobile UI demo of a social media feed.
+* [`makepad_taobao`]: a UI demo for an online shopping app, similar to eBay or Taobao.
+* [`todo_makepad`]: a basic to-do list app.
+* [`makepad_wechat`]: a demo of a chat-like app UI, like WeChat, WhatsApp, Signal, etc.
+* [`makepad_tiktok`]: a UI demo for a TikTok-style short video browsing app.
+* [`makepad_widgets_sample`]: an app showcasing various widgets offered by Makepad.
+* [`makepad_image_manipulation`]: a demo of Makepad's ability to do funky transformations on images with high performance.
+* [`makepad_7guis`]: select implementations of the 7 GUIs benchmark.
