@@ -16,13 +16,6 @@ Lots of sample apps built using Makepad Framework:
 * [Project Robius](robius.html)
 * ...
 
-ul li:before {    
-    font-family: 'FontAwesome';
-    content: '\f067';
-    margin:0 5px 0 -15px;
-    color: #f00;
-}
-
 ## Deprecated Documents
 
 [Makepad Architecture Doc v1.2](https://makepad.notion.site/Makepad-Architecture-v1-2-c8089aa477c14c349a57e0e633c556ba) (*Deprecated*)
