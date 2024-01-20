@@ -2,7 +2,10 @@
 
 Official Makepad Documentation
 
-## Installation
+ Read it here:
+ [https://makepad.github.io/makepad_book/](https://makepad.github.io/makepad_book/)
+
+## Local Install
 
 ```bash
 cargo install mdbook

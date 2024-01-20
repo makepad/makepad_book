@@ -111,8 +111,6 @@ The implementation method of widgets doesn’t matter since the layout model is 
 
 Many widgets use a `LiveState` object to handle state animations.
 
-**Example** Creating a `hover` state for a single `draw_bg` shader
-
 **Example** Creating a `hover` state for a single `draw_bg` shader.
 
 ```rust
