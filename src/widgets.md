@@ -5,16 +5,16 @@ Makepad’s main widget crate stacking on top of Makepad Draw.
 It contains:
 
 - a retained mode widget system designable from the DSL
-- a set of base widgets (buttons, sliders, checkboxes, lists etc.)
+- a set of base widgets (buttons, sliders, checkboxes, lists, etc.)
 
 ## Walk-through
 
 The foundation on which all Makepad widgets are built:
 
-- A `DesktopWindow` widget to create a window
+- A `Window` widget to create a window
 - The ability to hook the drawflow to immediate mode for drawing
 
-Widgets draw themselves when `widget_draw` is called on them. To accomplish this, they use a mechanism identical to the one used for drawing the red rectangle shown earlier. Therefore, even though widgets draw themselves using an "immediate mode," they can still form retained mode structures that are designable from the DSL.
+Widgets draw themselves when `draw_walk` is called on them. To accomplish this, they use a mechanism identical to the one used for drawing the red rectangle shown earlier. Therefore, even though widgets draw themselves using an "immediate mode," they can still form retained mode structures that are designable from the DSL.
 
 **Example: A window with a single button**
 
@@ -22,44 +22,49 @@ Widgets draw themselves when `widget_draw` is called on them. To accomplish this
 use makepad_widgets::*;
 
 live_design!{
-    import makepad_widgets::desktop_window::DesktopWindow;
-    import makepad_widgets::button::Button;
+    import makepad_widgets::base::*;
+    import makepad_widgets::theme_desktop_dark::*;
+
     App = {{App}} {
-        ui:<DesktopWindow>{
-	            my_button = <Button>{label:”hello”}
+        ui: <Window>{
+            my_button = <Button> {
+                text: "Hello, World"
+            }
         }
     }
 }
+...
 
-impl AppMain for App{
-    fn handle_event(&mut self, cx: &mut Cx, event: &Event) {
-        if let Event::Draw(event) = event {
-            self.ui.draw_widget_all(&mut Cx2d::new(cx, event));
-				}
-				let actions = self.ui.handle_widget_event(cx, event);
-				if self.ui.get_button(id!(my_button)).clicked(&actions) {
-				    println!(“CLICKED!”);
-				}
+impl MatchEvent for App {
+    fn handle_actions(&mut self, _cx: &mut Cx, actions:&Actions) {
+        if self.ui.button(id!(my_button)).clicked(&actions) {
+            println!("CLICKED!");
+        }
     }
 }
+...
 ```
 
 *Retained mode* structures reside within the `<View>{}` widget, which is a component that can have a DSL-defined set of child widgets. All child widgets implement the `dyn` trait, and can be named and queried on the widget-tree.
 
 Makepad's UI DSL does not rely on a single, giant interpreter. Instead, it is defined per widget. Therefore, every widget can determine its own rendering model, whether it be immediate mode, retained mode, or often a mixture of both.
 
-In this example, `DesktopWindow` inherits from `View`, which gives it the ability to add arbitrary child widgets. The root widget (`DesktopWindow`) handles the incoming event stream followed by a button-query to check if it was clicked.
+In this example, `Window` inherits from `View`, which gives it the ability to add arbitrary child widgets. The root widget (`Window`) handles the incoming event stream followed by a button-query to check if it was clicked.
 
 This makes a *polling architecture* of the event flow possible. This allows for closure and borrow-free event handling as opposed to what using a callback closure would impose.
 
-In this example the root widget `DesktopWindow` handles the incoming event stream, and then the button is queried to check if it was clicked. This model enables a *polling architecture* for the event flow, which makes it possible to handle events without using closure or borrowing, instead of imposing a callback closure.
+In this example the root widget `Window` handles the incoming event stream, and then the button is queried to check if it was clicked. This model enables a *polling architecture* for the event flow, which makes it possible to handle events without using closure or borrowing, instead of imposing a callback closure.
 
 ## Queries
 
+For the main event handling part of the application, we implement `MatchEvent`, which is a trait to splice out events for us to handle. In this case we have the Button widget defined in the DSL called `my_button`.
+
 The `self.ui.get_button(id!(my_button))` call queries the UI structure which then returns a `ButtonRef` type.
-For each button, there is a `ButtonRef` and `ButtonSet` type that wraps a nullable reference to one or more buttons. This allows queries on multiple buttons at once, so only a single event handler is required. For instance `self.ui.get_button_set(ids!(my_button))` would return all buttons called `my_button` . 
+For each button, there is a `ButtonRef` and `ButtonSet` type that wraps a nullable reference to one or more buttons. This allows queries on multiple buttons at once, so only a single event handler is required. For instance `self.ui.get_button_set(ids!(my_button))` would return all buttons called `my_button`.
 
 This is particularly useful for multi-device UIs.
+
+Once the `clicked()` action is detected, we will print out the text "CLICKED!" on the console.
 
 ## Using the turtle for layout
 
@@ -69,37 +74,39 @@ For instance a button can be laid out like this:
 
 ```rust
 my_button = <Button>{
-	walk:{width:100,height:100},
-	label:”hello”
+	width: 100,
+    height: 100,
+	text: "hello"
 }
 ```
 
 ![turtle_100px.png](images/turtle_100px.png)
 
-The `walk` structure properties define a fixed-size `button`, with a height and width of 100px each.
+The `width` and `height` properties define a fixed-size `button`, with a height and width of 100px each.
 
 ---
 
 ```rust
-my_button = <Button>{
-	walk:{width:Fit},
-	label:”hello”
+my_button = <Button> {
+	width: Fit,
+	text: "hello"
 }
 ```
 
 ![turtle_fit.png](images/turtle_fit.png)
 
-Setting the `button` dimensions to `Fit` like this, makes the container snap to the `label` text’s dimensions.
+Setting the `button` dimensions to `Fit` like this, makes the container snap to the `text` text’s dimensions.
 
 ---
 
 Similarly many UI components with child nodes follow this model.
 
 ```rust
-<View>
-	{layout:{flow:Right, spacing:50}
-	<Button>{label:”B1”},
-	<Button>{label:”B2”}
+<View> {
+	flow: Right,
+    spacing: 50,
+	<Button> { text: "B1" },
+	<Button> { text: "B2" }
 }
 ```
 
@@ -109,7 +116,7 @@ The implementation method of widgets doesn’t matter since the layout model is 
 
 ## States and animation
 
-Many widgets use a `LiveState` object to handle state animations.
+Many widgets use a `Animator` object to handle state animations.
 
 **Example** Creating a `hover` state for a single `draw_bg` shader.
 
@@ -121,9 +128,9 @@ Live_design!{
             instance hover: 0.0
             fn pixel(self) -> vec4 { return mix(#f00, #0f0, self.hover) }
         }
-        state: {
+        animator: {
             hover = {
-							  default: off,
+				default: off,
                 off = {
                     from: {all: Forward {duration: 0.1}}
                     apply: {
@@ -144,7 +151,7 @@ Live_design!{
 
 #[derive(Live)]
 pub struct Button {
-    #[state] state: LiveState,
+    #[animator] animator: Animator,
     …
 }
 
