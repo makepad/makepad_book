@@ -5,7 +5,7 @@
 - [Makepad Overview](./overview.md)
   - [Makepad Framework](./framework.md)
   - [Makepad Studio](./studio.md)
-  - [Makepad Sample Apps](./sample_apps.md)
+  - [Makepad Example Apps](./example_apps.md)
 - [Makepad Framework Architecture](./architecture.md)
   - [Makepad Platform](./platform.md)
   - [Makepad Draw](./draw.md)

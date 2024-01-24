@@ -45,24 +45,23 @@ impl MatchEvent for App {
 ...
 ```
 
+In this example, `Window` inherits from `View`, which gives it the ability to add arbitrary child widgets. The root widget (`Window`) handles the incoming event stream followed by a button-query to check if it was clicked.
+
 *Retained mode* structures reside within the `<View>{}` widget, which is a component that can have a DSL-defined set of child widgets. All child widgets implement the `dyn` trait, and can be named and queried on the widget-tree.
 
 Makepad's UI DSL does not rely on a single, giant interpreter. Instead, it is defined per widget. Therefore, every widget can determine its own rendering model, whether it be immediate mode, retained mode, or often a mixture of both.
 
-In this example, `Window` inherits from `View`, which gives it the ability to add arbitrary child widgets. The root widget (`Window`) handles the incoming event stream followed by a button-query to check if it was clicked.
-
-This makes a *polling architecture* of the event flow possible. This allows for closure and borrow-free event handling as opposed to what using a callback closure would impose.
-
-In this example the root widget `Window` handles the incoming event stream, and then the button is queried to check if it was clicked. This model enables a *polling architecture* for the event flow, which makes it possible to handle events without using closure or borrowing, instead of imposing a callback closure.
+This makes a *polling architecture* of the event flow possible. In this example the root widget `Window` handles the incoming event stream, and then the button is queried to check if it was clicked. This model enables a polling architecture for the event flow, which allows for closure and borrow-free event handling as opposed to what using a callback closure would impose.“
 
 ## Queries
 
-For the main event handling part of the application, we implement `MatchEvent`, which is a trait to splice out events for us to handle. In this case we have the Button widget defined in the DSL called `my_button`.
+For the main event handling part of the application, we implement `MatchEvent`, which is a trait to splice out events for us to handle. In this case we have the `Button` widget defined in the DSL called `my_button`. We obtain a reference to the widget and check if it has been clicked.
 
-The `self.ui.get_button(id!(my_button))` call queries the UI structure which then returns a `ButtonRef` type.
-For each button, there is a `ButtonRef` and `ButtonSet` type that wraps a nullable reference to one or more buttons. This allows queries on multiple buttons at once, so only a single event handler is required. For instance `self.ui.get_button_set(ids!(my_button))` would return all buttons called `my_button`.
+The `self.ui.button(id!(my_button))` call queries the UI structure which then returns a `ButtonRef` type. Almost all widgets in Makepad are derived from `Widget`, which contains the `WidgetSet` and `WidgetRef` references. Correspondingly, for each button, there is a `ButtonRef` and `ButtonSet` type that wraps a nullable reference to one or more buttons.
 
-This is particularly useful for multi-device UIs.
+`ButtonSet` is used to hold all the button instances in the UI structure. It allows queries on multiple buttons at once, so only a single event handler is required. For instance `self.ui.button_set(ids!(my_button))` would return all buttons called `my_button`.
+
+`ButtonRef` is a reference-counted pointer to the button widget. It allows queries on multiple buttons. This is particularly useful for multi-device UIs.
 
 Once the `clicked()` action is detected, we will print out the text "CLICKED!" on the console.
 
@@ -112,17 +111,17 @@ Similarly many UI components with child nodes follow this model.
 
 ![turtle_frame.png](images/turtle_frame.png)
 
-The implementation method of widgets doesn’t matter since the layout model is inside the immediate mode structure. It works regardless of whether it uses a retained mode or an entirely immediate mode with a hookpoint.
+The layout model is inside the immediate mode structure. Therefore it works regardless of whether widgets use retained mode or a pure immediate mode with a hookpoint.
 
 ## States and animation
 
-Many widgets use a `Animator` object to handle state animations.
+Many widgets use an `Animator` object to handle state animations.
 
 **Example** Creating a `hover` state for a single `draw_bg` shader.
 
 ```rust
 Live_design!{
-  
+
     Button= {{Button}} {
        draw_bg: {
             instance hover: 0.0
@@ -130,14 +129,14 @@ Live_design!{
         }
         animator: {
             hover = {
-				default: off,
+                default: off,
                 off = {
                     from: {all: Forward {duration: 0.1}}
                     apply: {
                         draw_bg: {hover: 0.0}
                     }
                 }
-                
+
                 on = {
                     from: {all: Forward {duration: 0.1}}
                     apply: {
@@ -146,7 +145,7 @@ Live_design!{
                 }
             }
          }
-     } 
+     }
 }
 
 #[derive(Live)]

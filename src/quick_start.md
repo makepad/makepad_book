@@ -44,7 +44,7 @@ or
 git clone git@github.com:makepad/makepad.git
 ```
 
-### Change to latest 'rik' branch (Optional)
+### Change to latest 'rik' branch (Recommended)
 
 ```bash
 cd ~/projects/makepad
@@ -73,7 +73,7 @@ ls -l
 
 Your system is now setup to build and run Makepad example applications. All examples in this directory have the application name of `makepad-example-` prefix plus the name of directory.
 
-## To Build and Run on MacOS or PC
+## To Build and Run on macOS or PC
 
 Running on Desktop is the quickest way to try out an example app.
 
@@ -120,7 +120,7 @@ xcode-select --install
 cargo makepad apple ios install-toolchain
 ```
 
-### Install app on Apple devivce or iOS simulator
+### Install app on Apple devivce or iOS Simulator
 
 ### iOS Setup
 
