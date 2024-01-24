@@ -15,5 +15,9 @@ command = "mdbook-mermaid"
 [output.html]
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
 default-theme = "rust"
-git-repository-url = "https://github.com/guofoo/makepad-book"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/makepad/makepad_book"
 git-repository-icon = "fa-github"
+
+[output.html.playground]
+runnable = false
