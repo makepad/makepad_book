@@ -6,7 +6,7 @@ The project has utilized the Makepad Framework to develop many sample cross-plat
 
 ### Flagship apps
 
-* Robrix: the Robius Matrix chat client.  Coming soon!
+* [Robrix](https://github.com/project-robius/robrix): a Matrix chat client built using Makepad and other Robius components.
 
 ### Simple demo apps
 
@@ -18,3 +18,14 @@ The project has utilized the Makepad Framework to develop many sample cross-plat
 * [`makepad_widgets_sample`]: an app showcasing various widgets offered by Makepad.
 * [`makepad_image_manipulation`]: a demo of Makepad's ability to do funky transformations on images with high performance.
 * [`makepad_7guis`]: select implementations of the 7 GUIs benchmark.
+
+
+
+[`makepad_social_media_feed`]: https://github.com/project-robius/makepad_social_media_feed
+[`makepad_taobao`]: https://github.com/project-robius/makepad_taobao
+[`todo_makepad`]: https://github.com/project-robius/todo_makepad
+[`makepad_wechat`]: https://github.com/project-robius/makepad_wechat
+[`makepad_tiktok`]: https://github.com/project-robius/makepad_tiktok
+[`makepad_widgets_sample`]: https://github.com/project-robius/makepad_widgets_sample
+[`makepad_image_manipulation`]: https://github.com/project-robius/makepad_image_manipulation
+[`makepad_7guis`]: https://github.com/project-robius/makepad_7guis
