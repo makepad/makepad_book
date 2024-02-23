@@ -11,5 +11,6 @@
   - [Makepad Draw](./draw.md)
   - [Makepad Widgets](./widgets.md)
 - [Resources](./resources.md)
+  - [Book Examples](./book_examples.md)
   - [Presentations](./presentations.md)
   - [Project Robius Sample Apps](./robius.md)

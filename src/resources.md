@@ -4,17 +4,24 @@
 
 [https://github.com/makepad/makepad](https://github.com/makepad/makepad)
 
-## Discord
+[https://github.com/makepad/makepad_book](https://github.com/makepad/makepad_book) (This book)
 
-Best place to learn directly from the Makepad authors: 
+
+## Example Code
+
+The full runnable code for all examples will be located here: [Makepad Book Examples](https://github.com/makepad/makepad_book/tree/main/examples)
+
+## Participate and Join Discord
+
+Best place to learn directly from the Makepad authors, contributors and other users:
+
 Makepad Discord Discussion Group - [JOIN](https://discord.gg/adqBRq7Ece)
 
 ## Projects Using Makepad
 
-Lots of sample apps built using Makepad Framework: 
+Lots of sample apps built using Makepad Framework:
 
 * [Project Robius](robius.html)
-* ...
 
 ## Deprecated Documents
 

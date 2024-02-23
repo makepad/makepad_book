@@ -16,7 +16,7 @@ The foundation on which all Makepad widgets are built:
 
 Widgets draw themselves when `draw_walk` is called on them. To accomplish this, they use a mechanism identical to the one used for drawing the red rectangle shown earlier. Therefore, even though widgets draw themselves using an "immediate mode," they can still form retained mode structures that are designable from the DSL.
 
-**Example: A window with a single button**
+### Example: A window with a single button
 
 ```rust
 use makepad_widgets::*;
@@ -44,6 +44,8 @@ impl MatchEvent for App {
 }
 ...
 ```
+
+> 💡 The full runnable code for above example is located here: [Makepad Book Examples](https://github.com/makepad/makepad_book/tree/main/examples)
 
 In this example, `Window` inherits from `View`, which gives it the ability to add arbitrary child widgets. The root widget (`Window`) handles the incoming event stream followed by a button-query to check if it was clicked.
 
@@ -73,9 +75,9 @@ For instance a button can be laid out like this:
 
 ```rust
 my_button = <Button>{
-	width: 100,
+    width: 100,
     height: 100,
-	text: "hello"
+    text: "hello"
 }
 ```
 
@@ -87,8 +89,8 @@ The `width` and `height` properties define a fixed-size `button`, with a height 
 
 ```rust
 my_button = <Button> {
-	width: Fit,
-	text: "hello"
+    width: Fit,
+    text: "hello"
 }
 ```
 
@@ -102,10 +104,10 @@ Similarly many UI components with child nodes follow this model.
 
 ```rust
 <View> {
-	flow: Right,
+    low: Right,
     spacing: 50,
-	<Button> { text: "B1" },
-	<Button> { text: "B2" }
+    <Button> { text: "B1" },
+    <Button> { text: "B2" }
 }
 ```
 
