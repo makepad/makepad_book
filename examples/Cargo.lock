@@ -113,6 +113,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "makepad-markdown"
+version = "0.4.0"
+dependencies = [
+ "makepad-live-id",
+]
+
+[[package]]
 name = "makepad-math"
 version = "0.4.0"
 
@@ -181,6 +188,7 @@ dependencies = [
  "makepad-derive-widget",
  "makepad-draw",
  "makepad-html",
+ "makepad-markdown",
  "makepad-zune-jpeg",
  "makepad-zune-png",
 ]
@@ -220,6 +228,13 @@ version = "0.2.1"
 dependencies = [
  "makepad-zune-core",
  "makepad-zune-inflate",
+]
+
+[[package]]
+name = "makepad_book_example_widget_two_buttons"
+version = "0.1.0"
+dependencies = [
+ "makepad-widgets",
 ]
 
 [[package]]

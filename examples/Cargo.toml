@@ -1,5 +1,6 @@
 workspace.members = [
-    "window_single_button", 
+    "window_single_button",
+    "widget_two_buttons"
 ]
 
 workspace.resolver = "2"
